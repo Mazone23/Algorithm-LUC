@@ -1,5 +1,6 @@
 import math as math
 import sys as sys
+import numpy as np
 
 inputFile = open("input.txt", 'r')
 
@@ -19,7 +20,6 @@ def isProst(x):
 
 if (isProst(p) == True) and (isProst(q) == True):
     N = p * q
-    print("Число N =", N)
 
 elif not isProst(p):
     print("Число p = " + str(p) + " не является простым")
@@ -35,11 +35,18 @@ if (math.gcd(ForE, e)) != 1:
 
 # Параметр D для вычисления символа Лежандра
 D = P * P - 4
-print("Число D =", D)
 
 
 # Функция для вычисления символа Лежандра
 def Legendre(q, a, p):
+    if (a == 0):
+        return 0
+    if (a == p):
+        return 0
+    if (a == -p):
+        return 0
+    if (a < 0):
+        return 1
     if a != 1:
         t, J2P, q1 = 1, 1, 0
         if (a > p):
@@ -82,4 +89,33 @@ def SecretKey(a, n):
             return i
 
 
-print(SecretKey(e, SN))
+d = SecretKey(e, SN)
+
+
+def LucasV(e, P, N):
+    e += 1
+    Vn = np.zeros(e)
+    Vn[0] = 2
+    Vn[1] = P
+    i = 2
+    while (i < e):
+        Vn[i] = (P * Vn[i - 1] - Vn[i - 2]) % N
+        i += 1
+    return int(Vn[e - 1])
+
+
+Encryption_Text = LucasV(e, P, N)
+Decryption_Text = LucasV(d, Encryption_Text, N)
+
+
+print("Выбранные два простых числа: p =", str(p) + ", q =", str(q))
+print("Выбранное число e = " + str(e) + " взаимнопростое с (p-1)*(q-1)*(p+1)*(q+1) = " + str(ForE))
+print("Исходное сообщение: ", str(P))
+print("Открытый ключ: (", str(e) + ", " + str(N) + " )")
+print("Закрытый ключ: (", str(d) + ", " + str(N) + " )")
+print("Зашифрованное сообщение: ", Encryption_Text)
+print("Расшифрованное сообщение: ", Decryption_Text)
+
+# outputFile = open("output.txt", 'w')
+# outputFile.write(str())
+# outputFile.close()

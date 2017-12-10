@@ -1,12 +1,12 @@
 import math as math
 import sys as sys
 import numpy as np
+import gmpy2 as gm
 
 inputFile = open("input.txt", 'r')
 
 p, q, e, P = inputFile.readline().strip().split(" ")
 p, q, e, P = int(p), int(q), int(e), int(P)
-
 
 # Проверка на "простоту" чисел p и q
 def isProst(x):
@@ -27,6 +27,9 @@ elif not isProst(p):
 elif not isProst(q):
     print("Число q = " + str(q) + " не является простым")
 
+if P > N:
+    print("Сообщение P =", str(P), "должно быть меньше N =", str(N))
+
 # Сравнение на простоту выбранного числа e с Fore
 ForE = (p - 1) * (q - 1) * (p + 1) * (q + 1)
 if (math.gcd(ForE, e)) != 1:
@@ -35,7 +38,6 @@ if (math.gcd(ForE, e)) != 1:
 
 # Параметр D для вычисления символа Лежандра
 D = P * P - 4
-
 
 # Функция для вычисления символа Лежандра
 def Legendre(q, a, p):
@@ -78,8 +80,12 @@ def lcm(a, b):
             b %= a
     return m // (a + b)
 
-
-SN = lcm(p - Legendre(1, D, p), q - Legendre(1, D, q))
+if (D % p == 0):
+    print("Выбранное число p = " + str(p) + " не явлется взаимнопростым с D = " + str(D))
+elif (D % q == 0):
+    print("Выбранное число q = " + str(q) + " не явлется взаимнопростым с D = " + str(D))
+else:
+    SN = lcm(p - Legendre(1, D, p), q - Legendre(1, D, q))
 
 
 # Вычисление закрытого ключа
@@ -90,7 +96,6 @@ def SecretKey(a, n):
 
 
 d = SecretKey(e, SN)
-
 
 def LucasV(e, P, N):
     e += 1
@@ -110,11 +115,11 @@ Decryption_Text = LucasV(d, Encryption_Text, N)
 
 print("Выбранные два простых числа: p =", str(p) + ", q =", str(q))
 print("Выбранное число e = " + str(e) + " взаимнопростое с (p-1)*(q-1)*(p+1)*(q+1) = " + str(ForE))
-print("Исходное сообщение: ", str(P))
-print("Открытый ключ: (", str(e) + ", " + str(N) + " )")
-print("Закрытый ключ: (", str(d) + ", " + str(N) + " )")
-print("Зашифрованное сообщение: ", Encryption_Text)
-print("Расшифрованное сообщение: ", Decryption_Text)
+print("Исходное сообщение:", str(P))
+print("Открытый ключ: (" + str(e) + ", " + str(N) + ")")
+print("Закрытый ключ: (" + str(d) + ", " + str(N) + ")")
+print("Зашифрованное сообщение:", Encryption_Text)
+print("Расшифрованное сообщение:", Decryption_Text)
 
 # outputFile = open("output.txt", 'w')
 # outputFile.write(str())
